@@ -55,18 +55,37 @@ def write_to_word(transc, transl, gloss):
         part = part.replace('expe', expe)
         part = part.replace('number', str(i + 1))
         if transc[i][1] == transl[i][1]:
-            try:
-                if gloss[i][1] == transl[i][1]:
-                    part = part.replace('glossing',
-                                        '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                                            gloss[i][0].split()))
-                    part = small_caps(part)
-            except Exception:
-                part = part.replace('glossing', '')
+            if gloss[i][1] == transc[i][1]:
+                part = part.replace('glossing',
+                                    '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                        gloss[i][0].split()))
+                part = small_caps(part)
+            else:
+                gloss.insert(i, ['', '0', '0'])
+                part = part.replace('glossing',
+                                    '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                        gloss[i][0].split()))
+                part = small_caps(part)
             part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
                 transc[i][0].split()))
             part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
-        part = part.replace('optional', transl[i][1] + '—' + transl[i][2])
+        else:
+            transl.insert(i, ['', '0', '0'])
+            if gloss[i][1] == transc[i][1]:
+                part = part.replace('glossing',
+                                    '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                        gloss[i][0].split()))
+                part = small_caps(part)
+            else:
+                gloss.insert(i, ['', '0', '0'])
+                part = part.replace('glossing',
+                                    '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                        gloss[i][0].split()))
+                part = small_caps(part)
+            part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                transc[i][0].split()))
+            part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
+        part = part.replace('optional', transc[i][1] + '—' + transc[i][2])
         to_write.append(part)
     docx = open_file('document1.xml')
     docx = docx.replace('PASTE_HERE', ''.join(to_write))
