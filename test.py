@@ -8,6 +8,9 @@ def open_file(filename):
 
 def elan(filename):
     elan = open_file(filename)
+    elan = elan.replace('&', '')
+    elan = elan.replace('<', '&lt;')
+    elan = elan.replace('>', '&gt;')
     elan = elan.splitlines()
     transc = []
     transl = []
