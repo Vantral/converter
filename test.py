@@ -36,7 +36,7 @@ def elan(filename):
 
 def small_caps(text):
     new_text = re.sub('<.+?>', ' ', text)
-    pattern = '[a-z-=]+'
+    pattern = '[a-z]+'
     latins = re.findall(pattern, new_text)
     for latin in latins:
         text = text.replace(latin, '</w:t></w:r><w:r w:rsidRPr="00F6391B"><w:rPr><w:smallCaps/><w:lang w:val="en-US"/>'
@@ -59,36 +59,50 @@ def write_to_word(transc, transl, gloss, comment):
         part = part.replace('expe', expe)
         part = part.replace('number', str(i + 1))
         if transc[i][1] == transl[i][1] or transc[i][2] == transl[i][2]:
-            if gloss[i][1] == transc[i][1] or gloss[i][2] == transc[i][2]:
-                part = part.replace('glossing',
-                                    '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                                        gloss[i][0].split()))
+            try:
+                if gloss[i][1] == transc[i][1]:
+                    part = part.replace('glossing',
+                                        '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                            gloss[i][0].split()))
+                    part = small_caps(part)
+                else:
+                    gloss.insert(i, ['', '0', '0'])
+                    part = part.replace('glossing',
+                                        '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                            gloss[i][0].split()))
+                    part = small_caps(part)
+                part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                    transc[i][0].split()))
+                part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
+            except Exception:
+                part = part.replace('glossing', '')
                 part = small_caps(part)
-            else:
-                gloss.insert(i, ['', '0', '0'])
-                part = part.replace('glossing',
-                                    '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                                        gloss[i][0].split()))
-                part = small_caps(part)
-            part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                transc[i][0].split()))
-            part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
+                part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                    transc[i][0].split()))
+                part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
         else:
             transl.insert(i, ['', '0', '0'])
-            if gloss[i][1] == transc[i][1] or gloss[i][2] == transc[i][2]:
-                part = part.replace('glossing',
-                                    '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                                        gloss[i][0].split()))
+            try:
+                if gloss[i][1] == transc[i][1]:
+                    part = part.replace('glossing',
+                                        '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                            gloss[i][0].split()))
+                    part = small_caps(part)
+                else:
+                    gloss.insert(i, ['', '0', '0'])
+                    part = part.replace('glossing',
+                                        '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                            gloss[i][0].split()))
+                    part = small_caps(part)
+                part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                    transc[i][0].split()))
+                part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
+            except Exception:
+                part = part.replace('glossing', '')
                 part = small_caps(part)
-            else:
-                gloss.insert(i, ['', '0', '0'])
-                part = part.replace('glossing',
-                                    '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                                        gloss[i][0].split()))
-                part = small_caps(part)
-            part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
                 transc[i][0].split()))
-            part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
+                part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
         try:
             if comment[i][1] == transc[i][1] or comment[i][2] == transc[i][2]:
                 part = part.replace('optional', f'</w:t></w:r><w:r><w:t>{transc[i][1]}—{transc[i][2]} {comment[i][0]}')
