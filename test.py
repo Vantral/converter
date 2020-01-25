@@ -44,6 +44,15 @@ def small_caps(text):
     return text
 
 
+def unsuccess(part, transc, i, transl):
+    part = part.replace('glossing', '')
+    part = small_caps(part)
+    part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+        transc[i][0].split()))
+    part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
+    return part
+
+
 def write_to_word(transc, transl, gloss, comment):
     print(len(transl), len(transc), len(gloss), len(comment))
     length = len(transc)
@@ -58,7 +67,46 @@ def write_to_word(transc, transl, gloss, comment):
         part = part.replace('data', data)
         part = part.replace('expe', expe)
         part = part.replace('number', str(i + 1))
-        if transc[i][1] == transl[i][1] or transc[i][2] == transl[i][2]:
+        try:
+            if transc[i][1] == transl[i][1] or transc[i][2] == transl[i][2]:
+                try:
+                    if gloss[i][1] == transc[i][1]:
+                        part = part.replace('glossing',
+                                            '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                                gloss[i][0].split()))
+                        part = small_caps(part)
+                    else:
+                        gloss.insert(i, ['', '0', '0'])
+                        part = part.replace('glossing',
+                                            '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                                gloss[i][0].split()))
+                        part = small_caps(part)
+                    part = part.replace('TEXT',
+                                        '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                            transc[i][0].split()))
+                    part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
+                except IndexError:
+                    part = unsuccess(part, transc, i, transl)
+            else:
+                transl.insert(i, ['', '0', '0'])
+                try:
+                    if gloss[i][1] == transc[i][1]:
+                        part = part.replace('glossing',
+                                            '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                                gloss[i][0].split()))
+                        part = small_caps(part)
+                    else:
+                        gloss.insert(i, ['', '0', '0'])
+                        part = part.replace('glossing', '')
+                        part = small_caps(part)
+                    part = part.replace('TEXT',
+                                        '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
+                                            transc[i][0].split()))
+                    part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
+                except IndexError:
+                    part = unsuccess(part, transc, i, transl)
+        except IndexError:
+            part = part.replace('translation', '')
             try:
                 if gloss[i][1] == transc[i][1]:
                     part = part.replace('glossing',
@@ -67,49 +115,22 @@ def write_to_word(transc, transl, gloss, comment):
                     part = small_caps(part)
                 else:
                     gloss.insert(i, ['', '0', '0'])
-                    part = part.replace('glossing',
-                                        '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                                            gloss[i][0].split()))
+                    part = part.replace('glossing', '')
                     part = small_caps(part)
                 part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
                     transc[i][0].split()))
-                part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
-            except Exception:
+            except IndexError:
                 part = part.replace('glossing', '')
                 part = small_caps(part)
                 part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
                     transc[i][0].split()))
-                part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
-        else:
-            transl.insert(i, ['', '0', '0'])
-            try:
-                if gloss[i][1] == transc[i][1]:
-                    part = part.replace('glossing',
-                                        '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                                            gloss[i][0].split()))
-                    part = small_caps(part)
-                else:
-                    gloss.insert(i, ['', '0', '0'])
-                    part = part.replace('glossing',
-                                        '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                                            gloss[i][0].split()))
-                    part = small_caps(part)
-                part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                    transc[i][0].split()))
-                part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
-            except Exception:
-                part = part.replace('glossing', '')
-                part = small_caps(part)
-                part = part.replace('TEXT', '</w:t></w:r><w:r><w:rPr><w:lang w:val="en-US"/></w:rPr><w:tab/><w:t>'.join(
-                transc[i][0].split()))
-                part = part.replace('translation', '</w:t></w:r><w:r><w:t>' + transl[i][0])
         try:
             if comment[i][1] == transc[i][1] or comment[i][2] == transc[i][2]:
                 part = part.replace('optional', f'</w:t></w:r><w:r><w:t>{transc[i][1]}—{transc[i][2]} {comment[i][0]}')
             else:
                 part = part.replace('optional', f'{transc[i][1]}—{transc[i][2]}')
                 comment.insert(i, ['', '0', '0'])
-        except Exception:
+        except IndexError:
             part = part.replace('optional', f'{transc[i][1]}—{transc[i][2]}')
         to_write.append(part)
     docx = open_file('document1.xml')
